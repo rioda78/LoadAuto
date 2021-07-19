@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{5C4BB78D-675B-47CB-8529-ACB6468835FF}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="LoadAutoProj.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="D:\Belajar\delphi\ThreadedDelphi\ThrededDelphi.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="LoadAutoProj">
+        <MSBuild Projects="LoadAutoProj.dproj"/>
+    </Target>
+    <Target Name="LoadAutoProj:Clean">
+        <MSBuild Projects="LoadAutoProj.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="LoadAutoProj:Make">
+        <MSBuild Projects="LoadAutoProj.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ThrededDelphi">
+        <MSBuild Projects="D:\Belajar\delphi\ThreadedDelphi\ThrededDelphi.dproj"/>
+    </Target>
+    <Target Name="ThrededDelphi:Clean">
+        <MSBuild Projects="D:\Belajar\delphi\ThreadedDelphi\ThrededDelphi.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ThrededDelphi:Make">
+        <MSBuild Projects="D:\Belajar\delphi\ThreadedDelphi\ThrededDelphi.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="LoadAutoProj;ThrededDelphi"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="LoadAutoProj:Clean;ThrededDelphi:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="LoadAutoProj:Make;ThrededDelphi:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
