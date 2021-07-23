@@ -1,4 +1,4 @@
-unit UOpenQuery;
+unit UExecuteThread;
 
 interface
 
@@ -6,20 +6,19 @@ uses
   Classes, adodb, forms, controls, activex, db;
 
 type
-  TOpenQuery = class(TThread)
+  TExecuteThread = class(TThread)
   private
-    FConstring: string;
-    FTsql: string;
     tQry: TADOQuery;
+    FConstring: string;
     FTerminated: Boolean;
+    FTsql: string;
     procedure setConstring(const Value: string);
-    procedure setTsql(const Value: string);
     procedure setTerminated(const Value: Boolean);
+    procedure setTsql(const Value: string);
   protected
-
     procedure Execute; override;
   public
-    constructor Create(Q: TADOQuery;sSQL: String);
+    constructor Create(Q: TADOQuery; sSQL: string);
     property Tsql: string read FTsql write setTsql;
     property Constring: string read FConstring write setConstring;
     property Terminated: Boolean read FTerminated write setTerminated;
@@ -27,45 +26,43 @@ type
 
 implementation
 
-{ TOpenQuery }
+{ TExecuteThread }
 
-constructor TOpenQuery.Create(Q: TADOQuery;sSQL: String);
+constructor TExecuteThread.Create(Q: TADOQuery; sSQL: string);
 begin
   inherited Create(False);
   FreeOnTerminate := True;
-  tQry:=Q;
+  tQry := Q;
   Tsql := sSQL;
-
 end;
 
-procedure TOpenQuery.Execute;
+procedure TExecuteThread.Execute;
 begin
   inherited;
   CoInitialize(nil);
-    with tQry do
-    begin
-      SQL.Text := tsql;
+  with tQry do
+  begin
+    SQL.Text := tsql;
 
-        Open;
+    Open;
 
-        Sleep(100);
+    Sleep(100);
 
-    end;
+  end;
   CoUninitialize();
- // Screen.Cursor:=crDefault;
 end;
 
-procedure TOpenQuery.setConstring(const Value: string);
+procedure TExecuteThread.setConstring(const Value: string);
 begin
   FConstring := Value;
 end;
 
-procedure TOpenQuery.setTerminated(const Value: Boolean);
+procedure TExecuteThread.setTerminated(const Value: Boolean);
 begin
   FTerminated := Value;
 end;
 
-procedure TOpenQuery.setTsql(const Value: string);
+procedure TExecuteThread.setTsql(const Value: string);
 begin
   FTsql := Value;
 end;

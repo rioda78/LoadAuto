@@ -11,23 +11,13 @@ const
   WM_EXECUTESQL  = WM_USER + 2;
 
 type
-  TOpenQuery = class(TThread)
+  TOpenQueryThread = class(TThread)
   private
-    FID: integer;
-    FADOQ: TAdoQuery;
-    FSQL: string;
-    constructor Create(CreateSuspended:Boolean; AConnString:String;
-                       ASQL:string; IDThread:integer);
     procedure WMOpenDataSet(Msg: TMsg);
     procedure WMExecSQL(Msg: TMsg);
   protected
     procedure Execute; override;
   public
-    connstring:widestring;
-    Priority: TThreadPriority;
-    property ID:integer read FID write FID;
-    property SQL:string read FSQL write FSQL;
-    property ADOQ:TADOQuery read FADOQ write FADOQ;
     procedure Open(DataSet: TDataSet);
     procedure ExecSQL(DataSet: TDataSet);
   end;
@@ -36,81 +26,29 @@ implementation
 
 { TOpenQuery }
 
-constructor TOpenQuery.Create(CreateSuspended: Boolean; AConnString,
-  ASQL: string; IDThread: integer);
+procedure TOpenQueryThread.ExecSQL(DataSet: TDataSet);
 begin
-  inherited Create(CreateSuspended);
-
-  // ini
-  Self.FreeOnTerminate := False;
-
-  // Create the Query
-  FADOQ := TAdoquery.Create(nil);
-  // assign connections
-  FADOQ.ConnectionString := AConnString;
-  FADOQ.SQL.Add(ASQL);
-  Self.FID := IDThread;
-  Self.FSQL:= ASQL;
+PostThreadMessage(ThreadID, WM_EXECUTESQL, Integer(DataSet), 0);
 end;
 
-procedure TOpenQuery.ExecSQL(DataSet: TDataSet);
-begin
- PostThreadMessage(ThreadID, WM_EXECUTESQL, Integer(DataSet), 0);
-end;
-
-procedure TOpenQuery.Execute;
+procedure TOpenQueryThread.Execute;
 var
-  Msg : TMsg;
-begin
- inherited;
-
-  try
-    // Ejecutar la consulta
-    FADOQ.Open;
-  except
-
-  end;
+  Msg : TMsg;begin  FreeOnTerminate := True;  PeekMessage(Msg, 0, WM_USER, WM_USER, PM_NOREMOVE); while not Terminated do begin    if GetMessage(Msg, 0, 0, 0) then       case Msg.Message of         WM_OPENDATASET: WMOpenDataSet(Msg);         WM_EXECUTESQL:  WMExecSQL(Msg);       end; end;
 
 end;
 
-procedure TOpenQuery.Open(DataSet: TDataSet);
+procedure TOpenQueryThread.Open(DataSet: TDataSet);
 begin
- PostThreadMessage(ThreadID, WM_OPENDATASET, Integer(DataSet), 0);
+PostThreadMessage(ThreadID, WM_OPENDATASET, Integer(DataSet), 0);
 end;
 
-procedure TOpenQuery.WMExecSQL(Msg: TMsg);
+procedure TOpenQueryThread.WMExecSQL(Msg: TMsg);
 var
-  Qry : TQuery;
-begin
-  try
-    Qry := TQuery(Msg.wParam);
-    try
-      Qry.Open;
-    except
-      Qry.ExecSQL;
-    end;
-  except
-    On E: Exception do
-       ShowMessage(E.Message);
-  end;
+  Qry : TQuery;begin  try    Qry := TQuery(Msg.wParam);    try      Qry.Open;    except      Qry.ExecSQL;    end;  except    On E: Exception do       ShowMessage(E.Message);  end;end;
 
-
-end;
-
-procedure TOpenQuery.WMOpenDataSet(Msg: TMsg);
+procedure TOpenQueryThread.WMOpenDataSet(Msg: TMsg);
 var
-  Ds : TDataSet;
-
-begin
-  try
-    Ds := TDataSet(Msg.wParam);
-    Ds.Open;
-  except
-    On E: Exception do
-       ShowMessage(E.Message);
-  end;
-
-
+  Ds : TDataSet;begin  try    Ds := TDataSet(Msg.wParam);    Ds.Open;  except    On E: Exception do       ShowMessage(E.Message);  end;
 end;
 
 end.

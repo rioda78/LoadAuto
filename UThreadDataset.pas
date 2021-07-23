@@ -21,7 +21,8 @@ type
 implementation
 
 const
-  WM_OPENDATASET = WM_USER + 1;  WM_EXECUTESQL  = WM_USER + 2;
+  WM_OPENDATASET = WM_USER + 1;
+  WM_EXECUTESQL  = WM_USER + 2;
 
 { TThreadDataSet }
 
@@ -32,7 +33,19 @@ end;
 
 procedure TThreadDataSet.Execute;
 var
-  Msg : TMsg;begin  FreeOnTerminate := True;  PeekMessage(Msg, 0, WM_USER, WM_USER, PM_NOREMOVE);  while not Terminated do begin    if GetMessage(Msg, 0, 0, 0) then       case Msg.Message of         WM_OPENDATASET: WMOpenDataSet(Msg);         WM_EXECUTESQL:  WMExecSQL(Msg);       end;  end;
+  Msg : TMsg;
+
+begin
+  FreeOnTerminate := True;
+  PeekMessage(Msg, 0, WM_USER, WM_USER, PM_NOREMOVE);
+
+  while not Terminated do begin
+    if GetMessage(Msg, 0, 0, 0) then
+       case Msg.Message of
+         WM_OPENDATASET: WMOpenDataSet(Msg);
+         WM_EXECUTESQL:  WMExecSQL(Msg);
+       end;
+  end;
 end;
 
 procedure TThreadDataSet.Open(DataSet: TDataSet);
@@ -42,13 +55,34 @@ end;
 
 procedure TThreadDataSet.WMExecSQL(Msg: TMsg);
 var
-  Qry : TQuery;begin  try    Qry := TQuery(Msg.wParam);    try      Qry.Open;    except      Qry.ExecSQL;    end;  except    On E: Exception do       ShowMessage(E.Message);  end;
+  Qry : TQuery;
+begin
+  try
+    Qry := TQuery(Msg.wParam);
+    try
+      Qry.Open;
+    except
+      Qry.ExecSQL;
+    end;
+  except
+    On E: Exception do
+       ShowMessage(E.Message);
+  end;
 
 end;
 
 procedure TThreadDataSet.WMOpenDataSet(Msg: TMsg);
 var
-  Ds : TDataSet;begin  try    Ds := TDataSet(Msg.wParam);    Ds.Open;  except    On E: Exception do       ShowMessage(E.Message);  end;
+  Ds : TDataSet;
+
+begin
+  try
+    Ds := TDataSet(Msg.wParam);
+    Ds.Open;
+  except
+    On E: Exception do
+       ShowMessage(E.Message);
+  end;
 end;
 
 end.

@@ -109,10 +109,12 @@
         <DCCReference Include="UQThread.pas"/>
         <DCCReference Include="UThreadDataset.pas"/>
         <DCCReference Include="Udm.pas">
-            <Form>DataModule1</Form>
+            <Form>Dm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="UExecuteThread.pas"/>
+        <DCCReference Include="uADOConnector.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

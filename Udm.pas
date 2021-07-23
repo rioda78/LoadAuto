@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, Data.DB, Data.Win.ADODB;
 
 type
-  TDataModule1 = class(TDataModule)
+  TDm = class(TDataModule)
     ADOConnSatu: TADOConnection;
     ADOConnDua: TADOConnection;
     procedure DataModuleCreate(Sender: TObject);
@@ -45,7 +45,7 @@ type
   end;
 
 var
-  DataModule1: TDataModule1;
+  Dm: TDm;
 
 implementation
 
@@ -56,21 +56,21 @@ uses System.IniFiles;
 
 { TDataModule1 }
 
-procedure TDataModule1.ADOConnSatuBeforeConnect(Sender: TObject);
+procedure TDm.ADOConnSatuBeforeConnect(Sender: TObject);
 begin
 BacaIniFile ;
 BuildString ;
 ADOConnSatu.ConnectionString := ConstringSatu ;
 end;
 
-procedure TDataModule1.ADOConnDuaBeforeConnect(Sender: TObject);
+procedure TDm.ADOConnDuaBeforeConnect(Sender: TObject);
 begin
 BacaIniFile ;
 BuildString ;
 ADOConnDua.ConnectionString := ConstringDua ;
 end;
 
-procedure TDataModule1.BacaIniFile;
+procedure TDm.BacaIniFile;
 var
   ini: TIniFile;
   vmode,alamat : string ;
@@ -118,68 +118,69 @@ begin
   end;
 end;
 
-procedure TDataModule1.BuildString;
+procedure TDm.BuildString;
 begin
   if IsSqlAuth then
   begin
     ConstringDua :=  'Provider=SQLOLEDB.1;Password='+password+';Persist Security Info=True;User ID='+
-     Userid +';Initial Catalog='+databaseDua+';Data Source='+Server ;
-     ConstringSatu :=  'SQLOLEDB.1;Password='+password+';Persist Security Info=True;User ID='+
-     Userid +';Initial Catalog='+databaseSatu+';Data Source='+Server ;
+     Userid +';Initial Catalog='+databaseDua+';Data Source='+Server +';';
+     ConstringSatu :=  'Provider=SQLOLEDB.1;Password='+password+';Persist Security Info=True;User ID='+
+     Userid +';Initial Catalog='+databaseSatu+';Data Source='+Server +';';
+     //Provider=SQLOLEDB.1;Password=12345;Persist Security Info=True;User ID=sa;Initial Catalog=siskeudes_sragen;Data Source=.
   end
   else
   begin
     ConstringDua := 'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;'+
-    'User ID='+userid+';Initial Catalog='+databaseDua+';Data Source='+Server;
+    'User ID='+userid+';Initial Catalog='+databaseDua+';Data Source='+Server +';';
     ConstringSatu := 'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;'+
-    'User ID='+userid+';Initial Catalog='+databasesatu+';Data Source='+Server;
+    'User ID='+userid+';Initial Catalog='+databasesatu+';Data Source='+Server +';';
   end;
 //windows///Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;User ID=sa;Initial Catalog=siskeudes_sragen;Data Source=.
 //Provider=SQLOLEDB.1;Password=12345;Persist Security Info=True;User ID=sa;Initial Catalog=siskeudes_sragen;Data Source=.
 end;
 
-procedure TDataModule1.DataModuleCreate(Sender: TObject);
+procedure TDm.DataModuleCreate(Sender: TObject);
 begin
   BacaIniFile ;
   BuildString ;
 end;
 
-procedure TDataModule1.setConstringSatu(const Value: string);
+procedure TDm.setConstringSatu(const Value: string);
 begin
   FConstringSatu := Value;
 end;
 
-procedure TDataModule1.setConstringDua(const Value: string);
+procedure TDm.setConstringDua(const Value: string);
 begin
   FConstringDua := Value;
 end;
 
-procedure TDataModule1.setDatabaseSatu(const Value: string);
+procedure TDm.setDatabaseSatu(const Value: string);
 begin
   FDatabaseSatu := Value;
 end;
 
-procedure TDataModule1.setDatabaseDua(const Value: string);
+procedure TDm.setDatabaseDua(const Value: string);
 begin
   FDatabaseDua := Value;
 end;
 
-procedure TDataModule1.setIsSqlAuth(const Value: Boolean);
+procedure TDm.setIsSqlAuth(const Value: Boolean);
 begin
   FIsSqlAuth := Value;
 end;
 
-procedure TDataModule1.setPassword(const Value: string);
+procedure TDm.setPassword(const Value: string);
 begin
   FPassword := Value;
 end;
 
-procedure TDataModule1.setServer(const Value: string);
+procedure TDm.setServer(const Value: string);
 begin
   FServer := Value;
 end;
 
-procedure TDataModule1.setUserid(const Value: string);
+procedure TDm.setUserid(const Value: string);
 begin
   FUserid := Value;
 end;

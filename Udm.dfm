@@ -1,13 +1,15 @@
-object DataModule1: TDataModule1
+object Dm: TDm
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 246
   Width = 427
   object ADOConnSatu: TADOConnection
+    Connected = True
     ConnectionString = 
       'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security In' +
       'fo=False;User ID=sa;Initial Catalog=siskeudes_sragen;Data Source' +
       '=.'
+    LoginPrompt = False
     Provider = 'SQLOLEDB.1'
     BeforeConnect = ADOConnSatuBeforeConnect
     Left = 136
@@ -20,7 +22,7 @@ object DataModule1: TDataModule1
       '=.'
     Provider = 'SQLOLEDB.1'
     BeforeConnect = ADOConnDuaBeforeConnect
-    Left = 232
-    Top = 120
+    Left = 248
+    Top = 112
   end
 end
